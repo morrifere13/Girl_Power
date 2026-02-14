@@ -1,0 +1,124 @@
+
+> girl-power-backend@1.0.0 dev
+> nodemon server.js --ignore uploads/ --ignore logs/
+
+[33m[nodemon] 3.1.11[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): server.js routes\**\* middleware\**\* config\**\* services\**\*[39m
+[33m[nodemon] watching extensions: js,json[39m
+[32m[nodemon] starting `node server.js`[39m
+
+✅ Variables d'environnement validées
+
+⏰ Backup scheduler initialized (Daily at 00:00)
+❌ Uncaught Exception: Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at app.listen (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\server.js:220:5)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+📧 Service email configuré avec Ethereal Mail
+User: gzhccejczmgod74f@ethereal.email
+Pass: Eh2kCTrddeN3HWYb7B
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+
+✅ Variables d'environnement validées
+
+⏰ Backup scheduler initialized (Daily at 00:00)
+❌ Uncaught Exception: Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at app.listen (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\server.js:220:5)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+📧 Service email configuré avec Ethereal Mail
+User: qmk5jjfwpqkjts3n@ethereal.email
+Pass: Nna5NpNc7yD38pXACz
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+
+✅ Variables d'environnement validées
+
+⏰ Backup scheduler initialized (Daily at 00:00)
+❌ Uncaught Exception: Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at app.listen (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\server.js:220:5)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+📧 Service email configuré avec Ethereal Mail
+User: bg3ynj6vkg242j2x@ethereal.email
+Pass: FDhZ9wcgypecUdaCBj
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+
+✅ Variables d'environnement validées
+
+⏰ Backup scheduler initialized (Daily at 00:00)
+❌ Uncaught Exception: Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at app.listen (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\Aidara\Desktop\Girl_Power_2026\girl-power-app\backend\server.js:220:5)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+📧 Service email configuré avec Ethereal Mail
+User: urnos35vmhhp66zv@ethereal.email
+Pass: dvGDdmhWbYUc4Cghtc
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

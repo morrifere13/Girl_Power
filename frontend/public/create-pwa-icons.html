@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Générateur d'icônes PWA - Girl Power</title>
+</head>
+<body>
+    <h1>Générateur d'icônes PWA Girl Power</h1>
+    <p>Instructions: Ouvrez ce fichier dans un navigateur, puis cliquez droit sur chaque canvas et "Enregistrer l'image sous..."</p>
+
+    <h2>Icône 192x192</h2>
+    <canvas id="icon192" width="192" height="192"></canvas>
+
+    <h2>Icône 512x512</h2>
+    <canvas id="icon512" width="512" height="512"></canvas>
+
+    <h2>Apple Touch Icon (180x180)</h2>
+    <canvas id="apple-icon" width="180" height="180"></canvas>
+
+    <script>
+        // Couleurs Girl Power
+        const primaryColor = '#e04f65';
+        const bgColor = '#ffffff';
+
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = primaryColor;
+            ctx.fillRect(0, 0, size, size);
+
+            // Texte "GP"
+            ctx.fillStyle = bgColor;
+            ctx.font = `bold ${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('GP', size / 2, size / 2);
+
+            // Bordure arrondie
+            ctx.strokeStyle = bgColor;
+            ctx.lineWidth = size * 0.02;
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2, size * 0.45, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        drawIcon('icon192', 192);
+        drawIcon('icon512', 512);
+        drawIcon('apple-icon', 180);
+
+        console.log('Icônes générées! Cliquez droit sur chaque canvas et "Enregistrer l\'image sous..."');
+        console.log('Nommez les fichiers:');
+        console.log('- icon192 → pwa-192x192.png');
+        console.log('- icon512 → pwa-512x512.png');
+        console.log('- apple-icon → apple-touch-icon.png');
+    </script>
+</body>
+</html>

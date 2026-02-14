@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Girl Power</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background: linear-gradient(to right, #e74c64, #d42d4f);
+            color: white;
+        }
+        .container {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { color: #e74c64; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Test Girl Power</h1>
+        <p>Si vous voyez cette page, le Frontend fonctionne!</p>
+
+        <h2>Tests:</h2>
+        <ul>
+            <li class="success">✅ HTML fonctionne</li>
+            <li class="success">✅ CSS fonctionne</li>
+            <li id="js-test" class="error">❌ JavaScript en attente...</li>
+            <li id="backend-test" class="error">❌ Backend en attente...</li>
+        </ul>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Test JavaScript
+        document.getElementById('js-test').className = 'success';
+        document.getElementById('js-test').textContent = '✅ JavaScript fonctionne';
+
+        // Test Backend
+        fetch('http://localhost:5000/api/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('backend-test').className = 'success';
+                document.getElementById('backend-test').textContent = '✅ Backend fonctionne';
+                document.getElementById('result').innerHTML = '<h3 style="color: green;">🎉 Tout fonctionne! Le problème est ailleurs.</h3>';
+            })
+            .catch(error => {
+                document.getElementById('backend-test').className = 'error';
+                document.getElementById('backend-test').textContent = '❌ Backend ne répond pas';
+                document.getElementById('result').innerHTML = '<h3 style="color: red;">⚠️ Le backend ne répond pas. Vérifiez qu\'il est lancé.</h3>';
+            });
+    </script>
+</body>
+</html>

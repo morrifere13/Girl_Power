@@ -1,0 +1,23 @@
+{
+  "name": "girl-power-app",
+  "version": "2.0.0",
+  "description": "Application Girl Power - Backend + Frontend",
+  "scripts": {
+    "backend": "cd backend && npm start",
+    "frontend": "cd frontend && npm run dev",
+    "full": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"bgBlue.bold,bgMagenta.bold\" \"npm run backend\" \"npm run frontend\"",
+    "full-bat": "run.bat",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "npm run full",
+    "start": "npm run full"
+  },
+  "keywords": [
+    "girl-power",
+    "management",
+    "candidates"
+  ],
+  "author": "Dev Senior Full-Stack",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

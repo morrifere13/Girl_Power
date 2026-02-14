@@ -1,0 +1,113 @@
+// POST create visite - VERSION COMPLÈTE
+router.post('/', verifyToken, async (req, res) => {
+    try {
+        const {
+            candidate_id, date_visite, ville_visite, medecin_nom, etablissement,
+            // Mesures physiques
+            taille, poids, temperature,
+            // Mesures complémentaires
+            tension_arterielle, pouls, pignet,
+            // Examens cliniques
+            av, vision, audition, buccodentaire, bdc, peau,
+            // Examens par systèmes
+            coeur_poumons, abdomen, membres_superieurs, membres_inferieurs,
+            // État général
+            etat_general, asthmatique, handicap,
+            // Spécifique femmes
+            test_grossesse, grossesse,
+            // Autres
+            groupe_sanguin, allergies, maladies_chroniques,
+            // Aptitude
+            apte_physiquement, observations, examens, contre_indications
+        } = req.body;
+
+        // Calcul automatique IMC
+        let imc = null;
+        let interpretation_imc = null;
+        if (taille && poids) {
+            const tailleEnMetres = taille / 100;
+            imc = (poids / (tailleEnMetres * tailleEnMetres)).toFixed(2);
+            if (imc < 18.5) interpretation_imc = 'Maigreur';
+            else if (imc < 25) interpretation_imc = 'Normal';
+            else if (imc < 30) interpretation_imc = 'Surpoids';
+            else interpretation_imc = 'Obésité';
+        }
+
+        // Calcul automatique Pignet si pas fourni
+        let pignetValue = pignet;
+        if (!pignetValue && taille && poids) {
+            pignetValue = (taille - poids).toFixed(2);
+        }
+
+        // Vérifier candidate
+        const [candidates] = await db.query('SELECT sexe FROM candidates WHERE id = ?', [candidate_id]);
+        if (candidates.length === 0) {
+            return res.status(404).json({ error: 'Candidate non trouvée' });
+        }
+
+        const sexe = candidates[0].sexe;
+
+        // Déterminer statut
+        let statut = 'VALIDE';
+        if (sexe === 'F') {
+            if (!test_grossesse) {
+                return res.status(400).json({ error: 'Test de grossesse obligatoire pour les femmes' });
+            }
+            if (test_grossesse === 'POSITIF' || grossesse === true) {
+                statut = 'REJETE';
+            }
+        }
+
+        if (apte_physiquement === false) {
+            statut = 'REJETE';
+        }
+
+        if (contre_indications && contre_indications.length > 0) {
+            const ciMajeures = contre_indications.filter(ci => ci.niveau === 'MAJEURE');
+            if (ciMajeures.length > 0) statut = 'REJETE';
+        }
+
+        const [result] = await db.query(`
+            INSERT INTO visites_medicales (
+                candidate_id, date_visite, ville_visite, medecin_nom, etablissement,
+                taille, poids, imc, interpretation_imc, temperature,
+                tension_arterielle, pouls, pignet,
+                av, vision, audition, buccodentaire, bdc, peau,
+                coeur_poumons, abdomen, membres_superieurs, membres_inferieurs,
+                etat_general, asthmatique, handicap,
+                test_grossesse, grossesse,
+                groupe_sanguin, allergies, maladies_chroniques,
+                examens, contre_indications, apte_physiquement, observations, statut, created_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            candidate_id, date_visite, ville_visite || null, medecin_nom, etablissement,
+            taille || null, poids || null, imc, interpretation_imc, temperature || null,
+            tension_arterielle || null, pouls || null, pignetValue || null,
+            av || null, vision || null, audition || null, buccodentaire || null, bdc || null, peau || null,
+            coeur_poumons || null, abdomen || null, membres_superieurs || null, membres_inferieurs || null,
+            etat_general || null, asthmatique || false, handicap || false,
+            test_grossesse || null, grossesse || false,
+            groupe_sanguin || null, allergies || null, maladies_chroniques || null,
+            JSON.stringify(examens || []), JSON.stringify(contre_indications || []),
+            apte_physiquement, observations || '', statut, req.user.id
+        ]);
+
+        // Mettre à jour statut candidate
+        if (statut === 'VALIDE') {
+            await db.query('UPDATE candidates SET statut = ? WHERE id = ?', ['Acceptée', candidate_id]);
+        } else {
+            await db.query('UPDATE candidates SET statut = ? WHERE id = ?', ['Refusée', candidate_id]);
+        }
+
+        res.status(201).json({
+            id: result.insertId,
+            statut,
+            message: statut === 'VALIDE' ? 'Visite validée - Candidate acceptée' : 'Visite rejetée - Candidate refusée'
+        });
+    } catch (error) {
+        console.error('Error creating visite:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// Remplacer la route POST existante dans routes/visites-medicales.js (ligne 121-235) par ce code
