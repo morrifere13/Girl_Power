@@ -187,6 +187,7 @@ function App() {
                           </ProtectedRoute>
                         } />
                         <Route path="/dossier/:id" element={<DossierCandidat />} />
+                        <Route path="/parcours/:id" element={<DossierCandidat />} />
 
                         {/* Stages Routes */}
                         <Route path="/stages" element={<StagesList />} />

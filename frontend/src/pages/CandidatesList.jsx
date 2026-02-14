@@ -7,7 +7,7 @@ import axios from 'axios'
 import {
   Eye, Edit, Trash2, X, Users, Clock, CheckCircle2, GraduationCap, XCircle,
   Search, Filter, Plus, ChevronLeft, ChevronRight, FileSpreadsheet, FileText,
-  MapPin, Phone, Mail, Award, Building2, FolderOpen, Grid, List, LayoutGrid, Download, Check
+  MapPin, Phone, Mail, Award, Building2, FolderOpen, Grid, List, LayoutGrid, Download, Check, Route
 } from 'lucide-react'
 
 export default function CandidatesList() {
@@ -554,6 +554,13 @@ export default function CandidatesList() {
                             >
                               <Eye size={16} />
                             </Link>
+                            <Link
+                              to={`/parcours/${candidate.id}`}
+                              className="p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded transition-all"
+                              title="Voir parcours"
+                            >
+                              <Route size={16} />
+                            </Link>
                             {(user?.role === 'admin' || user?.role === 'gestionnaire') && (
                               <>
                                 <Link
@@ -740,6 +747,13 @@ export default function CandidatesList() {
                       >
                         <Eye size={16} />
                         Voir détails
+                      </Link>
+                      <Link
+                        to={`/parcours/${candidate.id}`}
+                        className="px-3 py-2 text-violet-600 bg-violet-50 hover:bg-violet-100 rounded-lg transition-all"
+                        title="Voir parcours"
+                      >
+                        <Route size={18} />
                       </Link>
                       {(user?.role === 'admin' || user?.role === 'gestionnaire') && (
                         <>
