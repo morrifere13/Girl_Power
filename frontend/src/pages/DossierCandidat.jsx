@@ -211,9 +211,40 @@ export default function DossierCandidat() {
   }
 
   const { candidate, validation_logs, visites_medicales, formations, stages } = dossier
-  const latestFormation = formations?.[0]
-  const latestVisite = visites_medicales?.[0]
+  const validationLogsList = Array.isArray(validation_logs) ? validation_logs : []
+  const visitesList = Array.isArray(visites_medicales) ? visites_medicales : []
+  const formationsList = Array.isArray(formations) ? formations : []
+  const stagesList = Array.isArray(stages) ? stages : []
+
+  const latestFormation = formationsList[0]
+  const latestVisite = visitesList[0]
   const completude = getCompletude()
+  const isBlockedStatus = ['Rejeté', 'Inapte', 'Abandonné'].includes(candidate?.statut)
+
+  const isDatePassed = (dateValue) => {
+    if (!dateValue) return false
+    const today = new Date()
+    const date = new Date(dateValue)
+    today.setHours(0, 0, 0, 0)
+    date.setHours(0, 0, 0, 0)
+    return date < today
+  }
+
+  const formationOverdue = latestFormation?.statut === 'En formation' && isDatePassed(latestFormation?.date_fin_prevue)
+  const stageOverdue = stagesList.some((stage) => stage.statut === 'En cours' && isDatePassed(stage.date_fin_prevue))
+
+  const pendingActions = [
+    !isBlockedStatus && !validationLogsList.length && { label: 'Validation de la candidature à effectuer', severity: 'high' },
+    !isBlockedStatus && !latestVisite && ['Sélectionné', 'Apte', 'Admis', 'En formation', 'Terminé'].includes(candidate.statut) && {
+      label: 'Planifier la visite médicale', severity: 'high'
+    },
+    !isBlockedStatus && !latestFormation && ['Apte', 'Admis', 'En formation', 'Terminé'].includes(candidate.statut) && {
+      label: "Démarrer l'inscription en formation", severity: 'medium'
+    },
+    !isBlockedStatus && formationOverdue && { label: 'Formation en retard (date fin prévue dépassée)', severity: 'high' },
+    !isBlockedStatus && stagesList.length === 0 && candidate.statut === 'Terminé' && { label: 'Aucun stage enregistré après la formation', severity: 'medium' },
+    !isBlockedStatus && stageOverdue && { label: 'Un stage en cours est en retard', severity: 'high' }
+  ].filter(Boolean)
 
   const getStatutColor = (statut) => {
     const map = {
@@ -238,15 +269,17 @@ export default function DossierCandidat() {
       title: 'Inscription',
       date: candidate.date_inscription,
       color: 'blue',
-      completed: true
+      completed: true,
+      statusLabel: 'Terminé'
     },
     {
       key: 'validation',
       icon: Shield,
       title: 'Validation',
-      date: validation_logs?.[0]?.created_at,
+      date: validationLogsList[0]?.created_at,
       color: ['Sélectionné', 'Apte', 'Admis', 'En formation', 'Terminé'].includes(candidate.statut) ? 'emerald' : candidate.statut === 'Rejeté' ? 'red' : 'gray',
-      completed: candidate.statut !== 'Inscrit'
+      completed: candidate.statut !== 'Inscrit',
+      statusLabel: candidate.statut === 'Rejeté' ? 'Refusée' : candidate.statut !== 'Inscrit' ? 'Terminée' : 'À faire'
     },
     {
       key: 'visite',
@@ -254,7 +287,8 @@ export default function DossierCandidat() {
       title: 'Visite Médicale',
       date: latestVisite?.date_visite,
       color: latestVisite ? (latestVisite.apte_physiquement ? 'emerald' : 'red') : 'gray',
-      completed: !!latestVisite
+      completed: !!latestVisite,
+      statusLabel: latestVisite ? 'Terminée' : 'À faire'
     },
     {
       key: 'formation',
@@ -262,18 +296,23 @@ export default function DossierCandidat() {
       title: 'Formation',
       date: latestFormation?.date_debut,
       color: latestFormation ? (latestFormation.statut === 'Abandonné' ? 'red' : latestFormation.statut === 'Terminé' ? 'emerald' : 'blue') : 'gray',
-      completed: !!latestFormation
+      completed: !!latestFormation,
+      statusLabel: !latestFormation ? 'À faire' : formationOverdue ? 'En retard' : latestFormation.statut === 'Terminé' ? 'Terminée' : 'En cours'
     },
     {
       key: 'stages',
       icon: Briefcase,
       title: 'Stages',
-      date: stages?.[0]?.date_debut,
-      color: stages?.length > 0 ? 'violet' : 'gray',
-      completed: stages?.length > 0
+      date: stagesList[0]?.date_debut,
+      color: stagesList.length > 0 ? 'violet' : 'gray',
+      completed: stagesList.length > 0,
+      statusLabel: stagesList.length > 0 ? (stageOverdue ? 'En retard' : 'En cours') : 'À faire'
     }
   ]
 
+  const completedSteps = timelineSteps.filter(step => step.completed).length
+  const progressionPercent = Math.round((completedSteps / timelineSteps.length) * 100)
+  const currentStep = timelineSteps.find(step => !step.completed) || timelineSteps[timelineSteps.length - 1]
   const colorMap = {
     blue: { bg: 'bg-blue-500', ring: 'ring-blue-200', line: 'bg-blue-300' },
     emerald: { bg: 'bg-emerald-500', ring: 'ring-emerald-200', line: 'bg-emerald-300' },
@@ -381,6 +420,34 @@ export default function DossierCandidat() {
         </div>
       </div>
 
+      {/* Pilotage parcours */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <p className="text-xs text-gray-500 mb-1">Étape actuelle</p>
+          <p className="text-sm font-bold text-gray-800">{currentStep?.title}</p>
+          <p className="text-xs text-gray-500 mt-1">Progression parcours: {progressionPercent}%</p>
+        </div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 md:col-span-2">
+          <p className="text-xs text-gray-500 mb-2">Actions prioritaires</p>
+          {pendingActions.length === 0 ? (
+            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-2 rounded-lg flex items-center gap-2">
+              <CheckCircle size={14} /> Aucun blocage critique détecté
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {pendingActions.map((action, idx) => (
+                <span
+                  key={idx}
+                  className={`px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1 ${action.severity === 'high' ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-amber-50 text-amber-700 border border-amber-100'}`}
+                >
+                  <AlertTriangle size={12} /> {action.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Timeline */}
       <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
         <h2 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -405,9 +472,20 @@ export default function DossierCandidat() {
         </div>
         <div className="flex">
           {timelineSteps.map(step => (
-            <div key={step.key} className="flex-1 text-center">
+            <div key={step.key} className="flex-1 text-center px-1">
               <p className="text-xs font-medium text-gray-700">{step.title}</p>
               <p className="text-xs text-gray-400">{step.date ? fmtDate(step.date) : '—'}</p>
+              <span className={`inline-flex mt-1 px-2 py-0.5 rounded text-[10px] font-semibold ${
+                step.statusLabel === 'Terminée' || step.statusLabel === 'Terminé'
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : step.statusLabel === 'En cours'
+                    ? 'bg-blue-50 text-blue-700'
+                    : step.statusLabel === 'En retard'
+                      ? 'bg-red-50 text-red-700'
+                      : step.statusLabel === 'Refusée'
+                        ? 'bg-red-50 text-red-700'
+                        : 'bg-gray-100 text-gray-600'
+              }`}>{step.statusLabel}</span>
             </div>
           ))}
         </div>
@@ -447,9 +525,9 @@ export default function DossierCandidat() {
         badge={candidate.statut === 'Rejeté' ? 'Rejetée' : candidate.statut !== 'Inscrit' ? 'Validée' : 'En attente'}
         badgeColor={candidate.statut === 'Rejeté' ? 'red' : candidate.statut !== 'Inscrit' ? 'emerald' : 'gray'}
       >
-        {validation_logs && validation_logs.length > 0 ? (
+        {validationLogsList.length > 0 ? (
           <div className="space-y-3">
-            {validation_logs.map((log, i) => (
+            {validationLogsList.map((log, i) => (
               <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-800">{log.action}</p>
@@ -493,10 +571,10 @@ export default function DossierCandidat() {
               </div>
             )}
             {/* Historique visites multiples */}
-            {visites_medicales && visites_medicales.length > 1 && (
+            {visitesList.length > 1 && (
               <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                <p className="text-xs font-medium text-blue-800 mb-2">Historique des visites ({visites_medicales.length} au total)</p>
-                {visites_medicales.slice(1).map((v, i) => (
+                <p className="text-xs font-medium text-blue-800 mb-2">Historique des visites ({visitesList.length} au total)</p>
+                {visitesList.slice(1).map((v, i) => (
                   <div key={i} className="flex items-center justify-between py-1 text-xs border-b border-blue-100 last:border-0">
                     <span className="text-blue-700">{fmtDate(v.date_visite)} - {v.medecin_nom ? `Dr. ${v.medecin_nom}` : 'N/A'}</span>
                     <span className={v.apte_physiquement ? 'text-emerald-700 font-medium' : 'text-red-700 font-medium'}>
@@ -604,14 +682,14 @@ export default function DossierCandidat() {
         color="indigo"
         isOpen={openSections.stages}
         onToggle={() => toggleSection('stages')}
-        badge={stages?.length > 0 ? `${stages.length} stage(s)` : 'Aucun'}
-        badgeColor={stages?.length > 0 ? 'indigo' : 'gray'}
-        linkLabel={stages?.length > 0 ? 'Voir les stages' : null}
-        onLinkClick={stages?.length > 0 ? () => navigate('/stages') : null}
+        badge={stagesList.length > 0 ? `${stagesList.length} stage(s)` : 'Aucun'}
+        badgeColor={stagesList.length > 0 ? 'indigo' : 'gray'}
+        linkLabel={stagesList.length > 0 ? 'Voir les stages' : null}
+        onLinkClick={stagesList.length > 0 ? () => navigate('/stages') : null}
       >
-        {stages && stages.length > 0 ? (
+        {stagesList.length > 0 ? (
           <div className="space-y-3">
-            {stages.map((stage, i) => (
+            {stagesList.map((stage, i) => (
               <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-semibold text-gray-800">{stage.entreprise_nom || 'Entreprise inconnue'}</p>

@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { candidatesAPI, API_BASE_URL } from '../services/api'
-import { API_BASE_URL } from '../services/api'
 import {
   ArrowLeft, Edit, Trash2, Printer, User, MapPin,
   FileText, GraduationCap, Briefcase, Baby, Download,
   Phone, Mail, Calendar, Clock,
-  Users, History, Paperclip, Award, Eye,
+  Users, History, Paperclip, Award, Eye, Route,
   Building2, FolderOpen, Layers
 } from 'lucide-react'
 import FilePreviewModal from '../components/FilePreviewModal'
@@ -178,6 +177,13 @@ export default function CandidateDetails() {
                 <ArrowLeft size={18} />
                 Retour à la liste
               </button>
+              <Link
+                to={`/parcours/${id}`}
+                className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+              >
+                <Route size={16} />
+                Voir parcours
+              </Link>
             </div>
 
             {/* Main Content */}
@@ -867,6 +873,13 @@ export default function CandidateDetails() {
                 <Download size={16} />
                 <span className="hidden sm:inline">PDF</span>
               </button>
+              <Link
+                to={`/parcours/${id}`}
+                className="flex items-center gap-2 px-3 py-2 bg-violet-50 text-violet-700 hover:bg-violet-100 rounded-lg transition-all border border-violet-200 text-sm font-medium"
+              >
+                <Route size={16} />
+                <span className="hidden sm:inline">Parcours</span>
+              </Link>
               <Link
                 to={`/candidates/${id}/edit`}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-all shadow-sm"
